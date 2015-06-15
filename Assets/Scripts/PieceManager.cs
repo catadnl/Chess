@@ -22,8 +22,6 @@ public class PieceManager : Singleton<PieceManager>
 	
 	public void PickUp (Piece piece)
 	{
-		print ("Picking" + piece.type +" " + piece.color);
-		if(!hasLost()){
 		// If the player already holds a piece (held piece is not null)
 		// this call is ignored
 		if (heldPiece == null && Board.currentColor == piece.color) {
@@ -50,8 +48,7 @@ public class PieceManager : Singleton<PieceManager>
 		if(ok){	//if I destroyed an enemy
 			ok = false;
 			Drop(pieceCoord);
-			}}			else
-			print ("LOST");
+			}
 		
 	}
 
@@ -87,11 +84,19 @@ public class PieceManager : Singleton<PieceManager>
 					heldPiece.transform.position = pos;
 					Board.Instance.rotate ();
 				}
-			print ("Dropping" + heldPiece.type +" " + heldPiece.color);
 			// Releasing the piece
 			heldPiece = null;
 
 			HideHighlights ();
+			if(hasLost()){
+				if(Board.currentColor == Piece.PieceColor.Black)
+					ShowWin.Instance.showPrettyMessage("Whites ");
+				else
+					ShowWin.Instance.showPrettyMessage("Blacks  ");
+				foreach(Piece piece in currentPieces)
+					Destroy(piece.gameObject);
+				currentPieces.Clear();
+			}
 		}
 
 		// If theere is no piece being held
@@ -107,14 +112,14 @@ public class PieceManager : Singleton<PieceManager>
 		activeHighlights.Clear ();
 	}
 	
-	public bool playerIsInChess (List<Piece> pieceList){
+	public bool playerIsInChess (List<Piece> current){
 		Piece King = null;
-		foreach(Piece piece in pieceList)
-		if(piece.color == Board.currentColor && piece.type == Piece.PieceType.King){
-			King = piece;
-			break;
-		}
-		foreach(Piece piece in pieceList)
+		foreach(Piece piece in current)
+			if(piece.color == Board.currentColor && piece.type == Piece.PieceType.King){
+				King = piece;
+				break;
+			}
+		foreach(Piece piece in current)
 			if(piece.color != King.color){
 				List<Vector2> possibleAttacks = PiecePossibilities.Instance.PossibleMoves(piece);
 				if(possibleAttacks.Contains(King.coord))

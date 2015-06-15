@@ -98,7 +98,12 @@ public class PiecePossibilities : Singleton<PiecePossibilities>
 			if (piece.color == Piece.PieceColor.Black)
 				dir = -1;
 
-			notMoves.Add (new Vector2 (coord.x, coord.y + 1 * dir));
+			if (piece.IsOnStartingRow () && Math.Abs(coord.y - piece.coord.y) == 1)
+			{
+				notMoves.Add (new Vector2 (coord.x, coord.y + 1 * dir));
+
+			}
+
 			break;
 		case Piece.PieceType.Knight:
 			//the Knight may jump
@@ -187,6 +192,8 @@ public class PiecePossibilities : Singleton<PiecePossibilities>
 					possibleMoves.Add (coord);
 				}
 			}
+			else if(piece.type == Piece.PieceType.Pawn && move.x == 0 && Board.IsInside (coord) &&!Board.IsFree(coord))
+				notMoves.AddRange( PiecePossibilities.Instance.NotMoves (piece, coord) );
 		}
 		for(int i = possibleMoves.Count - 1; i>=0; i--){
 			Vector2 highlight = possibleMoves[i];
@@ -202,27 +209,41 @@ public class PiecePossibilities : Singleton<PiecePossibilities>
 		List<Vector2> inChessMoves = PossibleMoves(piece);
 		for (int i = inChessMoves.Count -1; i>= 0; i--){
 			Vector2 coord = inChessMoves[i];
-			List<Piece> current = new List<Piece> (PieceManager.Instance.currentPieces);
-			foreach(Piece p in current)
-				if(p.type == piece.type && p.color == piece.color){
-					Vector2 initial = p.coord;
-					p.coord = coord;
-					if(PieceManager.Instance.playerIsInChess(current))
-						inChessMoves.Remove(coord);
-					p.coord = initial;
-				}
 
+			if(Board.IsFree(coord)){
+				Vector2 initial = piece.coord;
+				piece.coord = coord;
+				List<Piece> current = new List<Piece> (PieceManager.instance.currentPieces);
+				if(PieceManager.Instance.playerIsInChess(current))
+					inChessMoves.Remove(coord);
+				piece.coord = initial;
+			}
+			else if (Board.getPiece(coord).color != piece.color){ //if I destroy a enemy piece
+				List<Piece> current = new List<Piece> (PieceManager.instance.currentPieces);
+				Piece enemy = Board.getPiece(coord);
+				Vector2 initial = piece.coord;
+				current.Remove(enemy);
+				piece.coord = coord;
+				if(PieceManager.Instance.playerIsInChess(current))
+					inChessMoves.Remove(coord);
+				piece.coord = initial;
+				current.Add(enemy);
+			}
 
 		}
 		foreach (Piece p in PieceManager.Instance.currentPieces){
 			Vector3  pos = Board.Clamp (Board.CoordToWorld(p.coord));
 			pos.z = -5;
 			p.transform.position = pos;
-			print("moving");
 		}
 		return inChessMoves;
 	}
 	
 }
-///TODO: verify if the king is in danger, show when win, *rotate the table, scos debugging si comments in 
-//refacut showhi.. pentru refolosirea codului
+/* arrives at the opposite side of the table
+ * starting new game after one finishes
+ * rotation of the table in slow motion
+ * less hard-coding
+ * try to reduce going over the list of pieces so many times - more dynamical functions 
+ * (ex ^ : reseting z in inChessMoves)
+ */

@@ -29,10 +29,9 @@ public class Board : Singleton<Board>
 		}
 		origin = originRef.position;
 		increment = (Vector2)incrementRef.position - origin;
-
+		
 	}
-
-
+	
 	void OnMouseDown ()
 	{
 		Vector2 mousePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
@@ -92,4 +91,5 @@ public class Board : Singleton<Board>
 				return piece;
 		return null;
 	}
+	
 }
