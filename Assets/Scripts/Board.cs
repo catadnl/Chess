@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Board : Singleton<Board>
 {
 	const int DIMENSION = 8;
+	const float ROTATION_DURATION = .1f;
 
 	public  static Piece.PieceColor currentColor = Piece.PieceColor.White;
 
@@ -13,25 +15,49 @@ public class Board : Singleton<Board>
 	static Vector2 origin;
 	static Vector2 increment;
 
+	float rot
+	{
+		get { return transform.eulerAngles.z; }
+		set { transform.rotation = Quaternion.Euler (new Vector3 (0, 0, value)); }
+	}
+
 	void Awake ()
 	{
 		origin = originRef.position;
 		increment = (Vector2)incrementRef.position - origin;
+
+		startTime = -1; // don't rotate it on startup
 	}
+
+	float startTime;
+	float startRot;
+	bool rotateBackwards;
 	public void rotate(){
 		if(currentColor == Piece.PieceColor.Black)
 			currentColor = Piece.PieceColor.White;
 		else
 			currentColor = Piece.PieceColor.Black;
-		transform.rotation = Quaternion.Euler(new Vector3(0, 0, transform.eulerAngles.z +180));
-		foreach(Piece piece in PieceManager.Instance.currentPieces){
-			piece.stayStill();
-		}
-		origin = originRef.position;
-		increment = (Vector2)incrementRef.position - origin;
-		
+
+		rotateBackwards = !rotateBackwards;
+		startTime = Time.time;
+		startRot = rot;
 	}
-	
+
+	void Update ()
+	{
+		if (startTime != -1) {
+			float perEplapsed = (Time.time - startTime) / ROTATION_DURATION;
+			if (perEplapsed < 1) 
+				rot = startRot + perEplapsed * (rotateBackwards ? 180 : -180);
+
+			else {
+				rot = startRot + 180;
+				origin = originRef.position;
+				increment = (Vector2)incrementRef.position - origin;
+			}
+		}
+	}
+
 	void OnMouseDown ()
 	{
 		Vector2 mousePosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
@@ -77,16 +103,16 @@ public class Board : Singleton<Board>
 			   (coord.y >= 0 && coord.y < DIMENSION);			   
 	}
 
-	public static bool IsFree (Vector2 coord)
+	public static bool IsFree (Vector2 coord, List<Piece> current)
 	{
-		foreach (Piece piece in PieceManager.Instance.currentPieces)
+		foreach (Piece piece in current)
 			if (piece.coord == coord)
 				return false;
 		return true;
 	}
 
-	public static Piece getPiece (Vector2 coord){
-		foreach (Piece piece in PieceManager.Instance.currentPieces)
+	public static Piece getPiece (Vector2 coord, List<Piece> current){
+		foreach (Piece piece in current)
 			if (piece.coord == coord)
 				return piece;
 		return null;

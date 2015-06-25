@@ -121,7 +121,7 @@ public class PieceManager : Singleton<PieceManager>
 			}
 		foreach(Piece piece in current)
 			if(piece.color != King.color){
-				List<Vector2> possibleAttacks = PiecePossibilities.Instance.PossibleMoves(piece);
+				List<Vector2> possibleAttacks = PiecePossibilities.Instance.PossibleMoves(piece, current);
 				if(possibleAttacks.Contains(King.coord))
 					return true;	
 			}

@@ -89,6 +89,7 @@ public class Piece : MonoBehaviour
 	void Update ()
 	{
 		SetSpriteAndName ();
+		stayStill ();
 	}
 
 	void OnMouseDown ()

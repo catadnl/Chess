@@ -15,10 +15,10 @@
 		<script type="text/javascript">
 		<!--
 			var config = {
-				width: 960, 
+				width: 960,
 				height: 600,
 				params: { enableDebugging:"0" }
-				
+
 			};
 			var u = new UnityObject2(config);
 
@@ -28,7 +28,7 @@
 				var $brokenScreen = jQuery("#unityPlayer").find(".broken");
 				$missingScreen.hide();
 				$brokenScreen.hide();
-				
+
 				u.observeProgress(function (progress) {
 					switch(progress.pluginStatus) {
 						case "broken":
@@ -116,7 +116,7 @@
 		</style>
 	</head>
 	<body>
-		<p class="header"><span>Created by: </span>Matei Catalin - Popa Ionut - Razvan Balint - Crosman Vlad</p>
+		<p class="header"><span>Created by: Matei Catalin | Popa Ionut | Crosman Vlad | Balint Razvan</span></p>
 		<div class="content">
 			<div id="unityPlayer">
 				<div class="missing">

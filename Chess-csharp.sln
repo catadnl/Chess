@@ -1,0 +1,46 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{0727C24E-C484-E017-5850-A0E366A7DD42}") = "Chess", "Assembly-CSharp-vs.csproj", "{501BD3FF-7F48-2366-810A-1677FF50E37F}"
+EndProject
+Project("{0727C24E-C484-E017-5850-A0E366A7DD42}") = "Chess", "Assembly-CSharp-Editor-vs.csproj", "{6C098988-6B17-8BC8-260E-9EECADD29771}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{501BD3FF-7F48-2366-810A-1677FF50E37F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{501BD3FF-7F48-2366-810A-1677FF50E37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{501BD3FF-7F48-2366-810A-1677FF50E37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{501BD3FF-7F48-2366-810A-1677FF50E37F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C098988-6B17-8BC8-260E-9EECADD29771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C098988-6B17-8BC8-260E-9EECADD29771}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C098988-6B17-8BC8-260E-9EECADD29771}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C098988-6B17-8BC8-260E-9EECADD29771}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+															GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.inheritsSet = null
+		$1.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $2
+		$2.inheritsSet = Mono
+		$2.inheritsScope = text/x-csharp
+		$2.scope = text/x-csharp
+		$0.TextStylePolicy = $3
+		$3.FileWidth = 120
+		$3.TabWidth = 4
+		$3.IndentWidth = 4
+		$3.EolMarker = Unix
+		$3.inheritsSet = Mono
+		$3.inheritsScope = text/plain
+		$3.scope = text/plain
+	EndGlobalSection
+
+EndGlobal

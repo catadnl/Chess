@@ -169,7 +169,7 @@ public class PiecePossibilities : Singleton<PiecePossibilities>
 		return notMoves;
 	}
 
-	public List<Vector2> PossibleMoves (Piece piece){
+	public List<Vector2> PossibleMoves (Piece piece, List<Piece> currentPieces){
 		List<Vector2> possibleMoves = new List<Vector2>();
 		List<Vector2> notMoves = new List<Vector2> ();
 		List<Vector2> moves = PiecePossibilities.Instance.Moves (piece);
@@ -179,20 +179,20 @@ public class PiecePossibilities : Singleton<PiecePossibilities>
 			coord += move;
 			
 			// add a  entry iff the move is inside the board and it is free -- special case for pawn
-			if ( (piece.type == Piece.PieceType.Pawn && Board.IsInside (coord) && Board.IsFree (coord) && move.x ==0) 
-			    || (piece.type != Piece.PieceType.Pawn && Board.IsInside (coord) && Board.IsFree (coord)) ){
+			if ( (piece.type == Piece.PieceType.Pawn && Board.IsInside (coord) && Board.IsFree (coord, currentPieces) && move.x ==0) 
+			    || (piece.type != Piece.PieceType.Pawn && Board.IsInside (coord) && Board.IsFree (coord ,currentPieces)) ){
 				possibleMoves.Add (coord);
 			}
-			else if ((piece.type == Piece.PieceType.Pawn && Board.IsInside(coord) && !Board.IsFree(coord) && move.x !=0)
-			         || (piece.type != Piece.PieceType.Pawn && Board.IsInside(coord) && !Board.IsFree(coord)) ){
+			else if ((piece.type == Piece.PieceType.Pawn && Board.IsInside(coord) && !Board.IsFree(coord, currentPieces) && move.x !=0)
+			         || (piece.type != Piece.PieceType.Pawn && Board.IsInside(coord) && !Board.IsFree(coord, currentPieces)) ){
 				notMoves.AddRange( PiecePossibilities.Instance.NotMoves (piece, coord) );
-				Piece enemy = Board.getPiece(coord);
+				Piece enemy = Board.getPiece(coord, currentPieces);
 				if(piece.color != enemy.color && !notMoves.Contains(enemy.coord))
 				{	//creating an entry for a pieace that may be destroyed -- special case for pawn
 					possibleMoves.Add (coord);
 				}
 			}
-			else if(piece.type == Piece.PieceType.Pawn && move.x == 0 && Board.IsInside (coord) &&!Board.IsFree(coord))
+			else if(piece.type == Piece.PieceType.Pawn && move.x == 0 && Board.IsInside (coord) &&!Board.IsFree(coord, currentPieces))
 				notMoves.AddRange( PiecePossibilities.Instance.NotMoves (piece, coord) );
 		}
 		for(int i = possibleMoves.Count - 1; i>=0; i--){
@@ -206,11 +206,11 @@ public class PiecePossibilities : Singleton<PiecePossibilities>
 
 	public List<Vector2> inChessMoves (Piece piece){
 
-		List<Vector2> inChessMoves = PossibleMoves(piece);
+		List<Vector2> inChessMoves = PossibleMoves(piece, PieceManager.instance.currentPieces);
 		for (int i = inChessMoves.Count -1; i>= 0; i--){
 			Vector2 coord = inChessMoves[i];
 
-			if(Board.IsFree(coord)){
+			if(Board.IsFree(coord, PieceManager.Instance.currentPieces)){
 				Vector2 initial = piece.coord;
 				piece.coord = coord;
 				List<Piece> current = new List<Piece> (PieceManager.instance.currentPieces);
@@ -218,15 +218,16 @@ public class PiecePossibilities : Singleton<PiecePossibilities>
 					inChessMoves.Remove(coord);
 				piece.coord = initial;
 			}
-			else if (Board.getPiece(coord).color != piece.color){ //if I destroy a enemy piece
+			else if (Board.getPiece(coord,PieceManager.Instance.currentPieces).color != piece.color){ 
+				//if I destroy a enemy piece
 				List<Piece> current = new List<Piece> (PieceManager.instance.currentPieces);
-				Piece enemy = Board.getPiece(coord);
+				Piece enemy = Board.getPiece(coord, current);
 				Vector2 initial = piece.coord;
+				Board.getPiece(piece.coord, current).coord = coord;
 				current.Remove(enemy);
-				piece.coord = coord;
 				if(PieceManager.Instance.playerIsInChess(current))
 					inChessMoves.Remove(coord);
-				piece.coord = initial;
+				Board.getPiece(piece.coord, current).coord = initial;
 				current.Add(enemy);
 			}
 
@@ -240,10 +241,13 @@ public class PiecePossibilities : Singleton<PiecePossibilities>
 	}
 	
 }
-/* arrives at the opposite side of the table
+// TODO:
+/*
+ * arrives at the opposite side of the table
  * starting new game after one finishes
- * rotation of the table in slow motion
  * less hard-coding
  * try to reduce going over the list of pieces so many times - more dynamical functions 
  * (ex ^ : reseting z in inChessMoves)
+ * draw case
+ * rocada
  */
